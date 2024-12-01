@@ -14,8 +14,7 @@ Travel tracker is a web application that allows users to track each country they
 ## **Technologies Used**
 - **Backend**: Node.js, Express.js
 - **Database**: PostgreSQL
-- **Frontend**: HTML, CSS, JavaScript (EJS templating engine)
-- **Styling**: CSS (Custom styles)
+- **Frontend**: HTML, CSS, EJS 
 
 ---
 
