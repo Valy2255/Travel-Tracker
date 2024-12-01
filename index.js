@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
+import e from "express";
 
 const app = express();
 const port = 3000;
@@ -35,17 +36,28 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/add", async(req,res) => {
+  
     const input = req.body.country;
-    const result = await db.query("Select country_code from countries where country_name=$1", [input]);
-    if(result.rows.length!==0) {
+    try {  
+      const result = await db.query("Select country_code from countries where country_name=$1", [input]);
+    
       const data=result.rows[0];
-      console.log(data);
       const country_code = data.country_code;
 
-      await db.query("INSERT INTO visited_countries (country_code) VALUES ($1)", [country_code]);
+      try{
+        await db.query("INSERT INTO visited_countries (country_code) VALUES ($1)", [country_code]);
+        res.redirect("/");
+      } catch (error) {
+        console.log(error);
+        const countries = await checkVisitedCountries();
+        res.render("index.ejs", { countries: countries, total: countries.length,error: "Country already exists, try again" });
+      }
+    } catch (error) { 
+      console.log(error);
+      const countries = await checkVisitedCountries();
+      res.render("index.ejs", { countries: countries, total: countries.length,error: "Country not found, try again" });
     }
-    res.redirect("/");
-});
+  });
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
